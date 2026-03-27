@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1120">
+  <title>पोषण मित्र — Nutrition Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --bg: #0B1120;
+      --bg2: #111827;
+      --bg3: #1a2540;
+      --bg4: #0F1E35;
+      --green: #22C55E;
+      --green2: #16A34A;
+      --green3: rgba(34, 197, 94, .12);
+      --teal: #2DD4BF;
+      --teal2: rgba(45, 212, 191, .12);
+      --orange: #FB923C;
+      --red: #F87171;
+      --amber: #FBBF24;
+      --indigo: #818CF8;
+      --w: #FFFFFF;
+      --w80: rgba(255, 255, 255, .8);
+      --w50: rgba(255, 255, 255, .5);
+      --w20: rgba(255, 255, 255, .2);
+      --w08: rgba(255, 255, 255, .08);
+      --w04: rgba(255, 255, 255, .04);
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --font-hi: 'Hind', sans-serif;
+      --r: 14px;
+      --r2: 20px;
+      --r3: 28px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, .5);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--w);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6
+    }
+
+    /* ── MESH BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 20%, rgba(34, 197, 94, .07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 90% 80%, rgba(45, 212, 191, .06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 50% 50%, rgba(129, 140, 248, .04) 0%, transparent 70%);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 3px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--green2);
+      border-radius: 99px
+    }
+
+    /* ══ NAV ════════════════════════════════════════ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 60px;
+      background: rgba(11, 17, 32, .9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--w08)
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pdot 2s ease-in-out infinite
+    }
+
+    @keyframes pdot {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, .5)
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(34, 197, 94, 0)
+      }
+    }
+
+    .nav-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.01em
+    }
+
+    .nav-title small {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--w50);
+      display: block;
+      line-height: 1
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--w08);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px
+    }
+
+    .lang-btn {
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: none;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--w50);
+      background: transparent;
+      transition: all .2s
+    }
+
+    .lang-btn.on {
+      background: var(--green);
+      color: #000
+    }
+
+    /* ══ PAGE WRAPPER ════════════════════════════════ */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 16px
+    }
+
+    /* ══ HERO ════════════════════════════════════════ */
+    .hero {
+      padding: 40px 0 32px;
+      text-align: center
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      background: var(--green3);
+      border: 1px solid rgba(34, 197, 94, .25);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 20px
+    }
+
+    .hero-pill span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pdot 2s infinite
+    }
+
+    .hero-h1 {
+      font-size: clamp(32px, 7vw, 52px);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 6px
+    }
+
+    .hero-h1 .hi-name {
+      font-family: var(--font-hi);
+      font-size: clamp(18px, 4vw, 28px);
+      color: var(--teal);
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px
+    }
+
+    .hero-h1 .accent {
+      color: var(--green)
+    }
+
+    .hero-p {
+      font-size: 15px;
+      color: var(--w50);
+      margin: 16px 0 28px;
+      line-height: 1.7
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    /* ══ BUTTONS ════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--r);
+      border: none;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      white-space: nowrap
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #000
+    }
+
+    .btn-green:hover {
+      background: #4ADE80;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(34, 197, 94, .3)
+    }
+
+    .btn-ghost {
+      background: var(--w08);
+      color: var(--w80);
+      border: 1px solid var(--w08)
+    }
+
+    .btn-ghost:hover {
+      background: var(--w20);
+      color: var(--w);
+      border-color: var(--w20)
+    }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #000
+    }
+
+    .btn-teal:hover {
+      background: #5EEAD4;
+      transform: translateY(-2px)
+    }
+
+    .btn-sm {
+      padding: 9px 18px;
+      font-size: 13px
+    }
+
+    .btn-full {
+      width: 100%
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important
+    }
+
+    /* ══ STAT STRIP ════════════════════════════════ */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 32px
+    }
+
+    .stat-tile {
+      background: var(--w04);
+      border: 1px solid var(--w08);
+      border-radius: var(--r);
+      padding: 16px 12px;
+      text-align: center;
+      transition: border-color .3s
+    }
+
+    .stat-tile:hover {
+      border-color: rgba(34, 197, 94, .3)
+    }
+
+    .stat-n {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .stat-l {
+      font-size: 11px;
+      color: var(--w50);
+      margin-top: 4px;
+      line-height: 1.3
+    }
+
+    .c-green {
+      color: var(--green)
+    }
+
+    .c-amber {
+      color: var(--amber)
+    }
+
+    .c-teal {
+      color: var(--teal)
+    }
+
+    .c-red {
+      color: var(--red)
+    }
+
+    .c-indigo {
+      color: var(--indigo)
+    }
+
+    /* ══ CARD ════════════════════════════════════════ */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--w08);
+      border-radius: var(--r2);
+      overflow: hidden;
+      margin-bottom: 20px
+    }
+
+    .card-head {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--w08);
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .card-head-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0
+    }
+
+    .card-head-icon.gr {
+      background: var(--green3)
+    }
+
+    .card-head-icon.tl {
+      background: var(--teal2)
+    }
+
+    .card-head-icon.or {
+      background: rgba(251, 146, 60, .12)
+    }
+
+    .card-head-info h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px
+    }
+
+    .card-head-info p {
+      font-size: 12px;
+      color: var(--w50);
+      line-height: 1.4
+    }
+
+    .card-body {
+      padding: 20px 24px
+    }
+
+    /* ══ STEP FORM ════════════════════════════════════ */
+    .progress-bar {
+      height: 3px;
+      background: var(--w08);
+      border-radius: 99px;
+      margin-bottom: 28px;
+      overflow: hidden
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--green), var(--teal));
+      transition: width .4s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .step-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px
+    }
+
+    .step-label span {
+      font-size: 12px;
+      color: var(--w50);
+      font-weight: 600
+    }
+
+    .step-label strong {
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 700
+    }
+
+    .form-step {
+      display: none;
+      animation: fadeUp .3s ease
+    }
+
+    .form-step.on {
+      display: block
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .fq {
+      margin-bottom: 24px
+    }
+
+    .fq-label {
+      margin-bottom: 12px
+    }
+
+    .fq-label .hi {
+      display: block;
+      font-family: var(--font-hi);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--teal);
+      margin-bottom: 2px
+    }
+
+    .fq-label .en {
+      display: block;
+      font-size: 13px;
+      color: var(--w50);
+      font-weight: 500
+    }
+
+    /* option buttons */
+    .opts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px
+    }
+
+    .opt {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1.5px solid var(--w08);
+      background: var(--w04);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--w80);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .opt:hover {
+      border-color: rgba(34, 197, 94, .4);
+      color: var(--green);
+      background: var(--green3)
+    }
+
+    .opt.on {
+      border-color: var(--green);
+      background: var(--green3);
+      color: var(--green)
+    }
+
+    .opts.full .opt {
+      flex: 1 1 calc(50% - 4px)
+    }
+
+    /* number inputs */
+    .inp-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .inp-grp {
+      display: flex;
+      flex-direction: column;
+      gap: 6px
+    }
+
+    .inp-grp label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--w50);
+      letter-spacing: .05em;
+      text-transform: uppercase
+    }
+
+    .inp {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg3);
+      border: 1.5px solid var(--w08);
+      color: var(--w);
+      font-family: var(--font);
+      font-size: 16px;
+      outline: none;
+      transition: all .2s;
+      -webkit-appearance: none
+    }
+
+    .inp:focus {
+      border-color: var(--teal);
+      background: var(--bg4);
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, .1)
+    }
+
+    .inp::placeholder {
+      color: var(--w20)
+    }
+
+    .bmi-hint {
+      font-size: 12px;
+      color: var(--w50);
+      margin-top: 8px;
+      min-height: 18px;
+      transition: all .3s
+    }
+
+    /* checkboxes */
+    .checks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .chk-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--w08);
+      background: var(--w04);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .chk-row:hover {
+      border-color: rgba(45, 212, 191, .3)
+    }
+
+    .chk-row.on {
+      background: var(--teal2);
+      border-color: rgba(45, 212, 191, .4)
+    }
+
+    .chk-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--w20);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .2s;
+      font-size: 11px;
+      color: transparent
+    }
+
+    .chk-row.on .chk-box {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #000
+    }
+
+    .chk-text .hi {
+      font-family: var(--font-hi);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--teal);
+      display: block
+    }
+
+    .chk-text .en {
+      font-size: 12px;
+      color: var(--w50);
+      display: block
+    }
+
+    /* step nav */
+    .step-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px
+    }
+
+    .btn-back-s {
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: var(--w04);
+      border: 1px solid var(--w08);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--w50);
+      cursor: pointer;
+      transition: all .2s;
+      flex-shrink: 0
+    }
+
+    .btn-back-s:hover {
+      color: var(--w);
+      border-color: var(--w20)
+    }
+
+    .btn-nxt {
+      flex: 1;
+      padding: 13px;
+      border-radius: 10px;
+      background: var(--green);
+      border: none;
+      color: #000;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .btn-nxt:hover {
+      background: #4ADE80
+    }
+
+    .btn-nxt:disabled {
+      background: var(--bg3);
+      color: var(--w20);
+      cursor: not-allowed
+    }
+
+    /* ══ RESULT ════════════════════════════════════ */
+    #result-wrap {
+      display: none
+    }
+
+    .risk-banner {
+      border-radius: var(--r2) var(--r2) 0 0;
+      padding: 28px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--w08)
+    }
+
+    .risk-icon {
+      font-size: 44px;
+      margin-bottom: 12px
+    }
+
+    .risk-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 16px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      margin-bottom: 12px
+    }
+
+    .rl-low {
+      background: rgba(34, 197, 94, .15);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, .3)
+    }
+
+    .rl-mod {
+      background: rgba(251, 191, 36, .15);
+      color: var(--amber);
+      border: 1px solid rgba(251, 191, 36, .3)
+    }
+
+    .rl-hi {
+      background: rgba(248, 113, 113, .15);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .3)
+    }
+
+    .risk-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px
+    }
+
+    .risk-sub {
+      font-size: 13px;
+      color: var(--w50)
+    }
+
+    .bmi-pills {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 18px;
+      flex-wrap: wrap
+    }
+
+    .bmi-pill {
+      background: var(--w04);
+      border: 1px solid var(--w08);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: center;
+      min-width: 80px
+    }
+
+    .bmi-pill-n {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--teal)
+    }
+
+    .bmi-pill-l {
+      font-size: 10px;
+      color: var(--w50);
+      margin-top: 2px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    .recs {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--w08)
+    }
+
+    .rec {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--w04)
+    }
+
+    .rec:last-child {
+      border-bottom: none
+    }
+
+    .rec-ico {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .rec-txt {
+      font-size: 13px;
+      color: var(--w80);
+      line-height: 1.6
+    }
+
+    .rec-txt b {
+      color: var(--w);
+      display: block;
+      font-size: 12px;
+      margin-bottom: 1px
+    }
+
+    .result-actions {
+      padding: 16px 24px;
+      display: flex;
+      gap: 10px
+    }
+
+    /* ══ HEALTH CENTRES ════════════════════════════ */
+    #hc-section {
+      display: none;
+      margin-bottom: 20px
+    }
+
+    .hc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--w08)
+    }
+
+    .hc-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .hc-list {
+      padding: 8px 0
+    }
+
+    .hc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--w04);
+      transition: background .2s;
+      cursor: pointer
+    }
+
+    .hc-item:last-child {
+      border-bottom: none
+    }
+
+    .hc-item:hover {
+      background: var(--w04)
+    }
+
+    .hc-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--green3);
+      border: 1px solid rgba(34, 197, 94, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0
+    }
+
+    .hc-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .hc-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px
+    }
+
+    .hc-type {
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 4px
+    }
+
+    .hc-addr {
+      font-size: 12px;
+      color: var(--w50);
+      margin-bottom: 6px;
+      line-height: 1.4
+    }
+
+    .hc-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .hc-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal);
+      text-decoration: none
+    }
+
+    .hc-phone:hover {
+      color: var(--w)
+    }
+
+    .hc-dist {
+      font-size: 11px;
+      color: var(--w50);
+      display: flex;
+      align-items: center;
+      gap: 3px
+    }
+
+    .hc-dist-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(34, 197, 94, .1);
+      color: var(--green)
+    }
+
+    .hc-empty {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--w50);
+      font-size: 13px
+    }
+
+    .loc-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--w50)
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--w08);
+      border-top-color: var(--green);
+      animation: spin .6s linear infinite;
+      flex-shrink: 0
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* ══ ALERT CARD ════════════════════════════════ */
+    .alert-card {
+      border-radius: var(--r);
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+
+    .alert-card.danger {
+      background: rgba(248, 113, 113, .08);
+      border: 1px solid rgba(248, 113, 113, .25)
+    }
+
+    .alert-card.warn {
+      background: rgba(251, 191, 36, .08);
+      border: 1px solid rgba(251, 191, 36, .25)
+    }
+
+    .alert-card.info {
+      background: var(--teal2);
+      border: 1px solid rgba(45, 212, 191, .2)
+    }
+
+    .alert-ico {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .alert-txt {
+      font-size: 13px;
+      line-height: 1.6
+    }
+
+    .alert-txt b {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 3px
+    }
+
+    /* ══ SECTION HEADING ═══════════════════════════ */
+    .sec-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 8px;
+      display: block
+    }
+
+    .sec-h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 8px
+    }
+
+    .sec-p {
+      font-size: 14px;
+      color: var(--w50);
+      line-height: 1.7;
+      max-width: 480px
+    }
+
+    /* ══ DIVIDER ════════════════════════════════════ */
+    .div {
+      height: 1px;
+      background: var(--w08);
+      margin: 32px 0
+    }
+
+    /* ══ FOOTER ════════════════════════════════════ */
+    footer {
+      text-align: center;
+      padding: 32px 16px;
+      border-top: 1px solid var(--w08);
+      color: var(--w50);
+      font-size: 12px;
+      position: relative;
+      z-index: 1
+    }
+
+    footer strong {
+      color: var(--green)
+    }
+
+    /* ══ TOAST ══════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg3);
+      border: 1px solid var(--w08);
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--w);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    .toast.ok {
+      border-color: rgba(34, 197, 94, .4);
+      color: var(--green)
+    }
+
+    .toast.err {
+      border-color: rgba(248, 113, 113, .4);
+      color: var(--red)
+    }
+
+    /* ══ RESPONSIVE ═════════════════════════════════ */
+    @media(max-width:480px) {
+      .inp-row {
+        grid-template-columns: 1fr
+      }
+
+      .opts.full .opt {
+        flex: 1 1 100%
+      }
+
+      .bmi-pills {
+        gap: 10px
+      }
+
+      .result-actions {
+        flex-direction: column
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-dot"></div>
+      <div>
+        <div class="nav-title">Poshan Mithra <small>User Portal</small></div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button class="lang-btn on" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('hi')">हि</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-pill"><span></span><span data-en="AI-Powered · Free · Made for MP"
+          data-hi="AI आधारित · मुफ़्त · MP के लिए">AI-Powered · Free · Made for MP</span></div>
+      <h1 class="hero-h1">
+        <span class="hi-name" style="font-family:var(--font-hi)">पोषण मित्र</span>
+        <span class="accent" data-en="Poshan" data-hi="पोषण">Poshan</span> <span data-en="Mithra"
+          data-hi="मित्र">Mithra</span>
+      </h1>
+      <p class="hero-p"
+        data-en="Free AI nutrition check for rural Madhya Pradesh. Know your risk, find nearest health centres, get diet advice — in Hindi or English."
+        data-hi="मध्य प्रदेश के लिए मुफ़्त AI पोषण जांच। जोखिम जानें, नजदीकी स्वास्थ्य केंद्र खोजें, आहार सलाह पाएं।">
+        Free AI nutrition check for rural Madhya Pradesh. Know your risk, find nearest health centres, get diet advice —
+        in Hindi or English.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-green" onclick="scrollToForm()">
+          <span data-en="🩺 Start Free Check" data-hi="🩺 मुफ़्त जांच शुरू करें">🩺 Start Free Check</span>
+        </button>
+        <button class="btn btn-ghost" onclick="findCentres()">
+          <span data-en="📍 Find Health Centres" data-hi="📍 स्वास्थ्य केंद्र खोजें">📍 Find Health Centres</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stat-strip">
+      <div class="stat-tile">
+        <div class="stat-n c-red">35.7%</div>
+        <div class="stat-l" data-en="Children Stunted in MP" data-hi="MP में बच्चे कुपोषित">Children Stunted in MP</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-n c-amber">54.8%</div>
+        <div class="stat-l" data-en="Women with Anaemia" data-hi="महिलाओं में एनीमिया">Women with Anaemia</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-n c-green" id="stat-checked">—</div>
+        <div class="stat-l" data-en="People Checked" data-hi="लोगों की जांच">People Checked</div>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- ASSESSMENT FORM -->
+    <section id="form-section">
+      <span class="sec-tag" data-en="NUTRITION ASSESSMENT" data-hi="पोषण जांच">NUTRITION ASSESSMENT</span>
+      <h2 class="sec-h2" data-en="Check Your Nutrition" data-hi="अपना पोषण जांचें">Check Your Nutrition</h2>
+      <p class="sec-p" style="margin-bottom:24px"
+        data-en="5 quick questions. Our AI gives you personalised diet advice + nearest health centres."
+        data-hi="5 आसान सवाल। AI से व्यक्तिगत आहार सलाह + नजदीकी स्वास्थ्य केंद्र।">5 quick questions. Our AI gives you
+        personalised diet advice + nearest health centres.</p>
+
+      <div class="card" id="form-card">
+        <div class="card-body">
+          <!-- progress -->
+          <div class="step-label">
+            <span data-en="Step" data-hi="चरण">Step</span> <span id="step-num">1</span> / 5
+            <strong id="step-pct">20%</strong>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="prog" style="width:20%"></div>
+          </div>
+
+          <!-- STEP 1 -->
+          <div class="form-step on" id="s0">
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="आपकी उम्र क्या है?">आपकी उम्र क्या है?</span>
+                <span class="en" data-en="How old are you?">How old are you?</span>
+              </div>
+              <div class="opts full" id="age-opts">
+                <button class="opt" onclick="pick('age','under-18',this)" data-en="Under 18 👦"
+                  data-hi="18 से कम 👦">Under 18 👦</button>
+                <button class="opt" onclick="pick('age','18-30',this)" data-en="18 – 30" data-hi="18 – 30">18 –
+                  30</button>
+                <button class="opt" onclick="pick('age','31-50',this)" data-en="31 – 50" data-hi="31 – 50">31 –
+                  50</button>
+                <button class="opt" onclick="pick('age','51+',this)" data-en="51 +" data-hi="51 +">51 +</button>
+              </div>
+            </div>
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="आप कौन हैं?">आप कौन हैं?</span>
+                <span class="en" data-en="Who are you?">Who are you?</span>
+              </div>
+              <div class="opts" id="gen-opts">
+                <button class="opt" onclick="pick('gender','female',this)" data-en="👩 Woman / Girl"
+                  data-hi="👩 महिला / लड़की">👩 Woman / Girl</button>
+                <button class="opt" onclick="pick('gender','male',this)" data-en="👦 Man / Boy"
+                  data-hi="👦 पुरुष / लड़का">👦 Man / Boy</button>
+                <button class="opt" onclick="pick('gender','other',this)" data-en="Other" data-hi="अन्य">Other</button>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-nxt" id="n0" onclick="go(1)" disabled data-en="Continue →" data-hi="आगे →">Continue
+                →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="form-step" id="s1">
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="अपनी लंबाई और वज़न बताएं">अपनी लंबाई और वज़न बताएं</span>
+                <span class="en" data-en="Enter your height & weight">Enter your height & weight</span>
+              </div>
+              <div class="inp-row">
+                <div class="inp-grp">
+                  <label data-en="HEIGHT (cm)" data-hi="लंबाई (सेमी)">HEIGHT (cm)</label>
+                  <input class="inp" type="number" id="ht" placeholder="e.g. 155" min="80" max="220" inputmode="numeric"
+                    oninput="checkHW()">
+                </div>
+                <div class="inp-grp">
+                  <label data-en="WEIGHT (kg)" data-hi="वज़न (किलो)">WEIGHT (kg)</label>
+                  <input class="inp" type="number" id="wt" placeholder="e.g. 48" min="20" max="200" inputmode="numeric"
+                    oninput="checkHW()">
+                </div>
+              </div>
+              <div class="bmi-hint" id="bmi-hint"></div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-s" onclick="go(0)">←</button>
+              <button class="btn-nxt" id="n1" onclick="go(2)" disabled data-en="Continue →" data-hi="आगे →">Continue
+                →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="form-step" id="s2">
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="दिन में कितनी बार खाना खाते हैं?">दिन में कितनी बार खाना खाते हैं?</span>
+                <span class="en" data-en="How many meals per day?">How many meals per day?</span>
+              </div>
+              <div class="opts full" id="meal-opts">
+                <button class="opt" onclick="pick('meals','1',this)" data-en="1 meal only 😔" data-hi="1 बार 😔">1 meal
+                  only 😔</button>
+                <button class="opt" onclick="pick('meals','2',this)" data-en="2 meals" data-hi="2 बार">2 meals</button>
+                <button class="opt" onclick="pick('meals','3',this)" data-en="3 meals ✅" data-hi="3 बार ✅">3 meals
+                  ✅</button>
+                <button class="opt" onclick="pick('meals','4+',this)" data-en="4+ meals 🌟" data-hi="4+ बार 🌟">4+ meals
+                  🌟</button>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-s" onclick="go(1)">←</button>
+              <button class="btn-nxt" id="n2" onclick="go(3)" disabled data-en="Continue →" data-hi="आगे →">Continue
+                →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="form-step" id="s3">
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="कितनी बार हरी सब्जियां खाते हैं?">कितनी बार हरी सब्जियां खाते हैं?</span>
+                <span class="en" data-en="How often do you eat vegetables?">How often do you eat vegetables?</span>
+              </div>
+              <div class="opts full" id="veg-opts">
+                <button class="opt" onclick="pick('veg','rarely',this)" data-en="Rarely / Never"
+                  data-hi="कभी नहीं">Rarely / Never</button>
+                <button class="opt" onclick="pick('veg','sometimes',this)" data-en="1–2 times a week"
+                  data-hi="1–2 बार/सप्ताह">1–2 times a week</button>
+                <button class="opt" onclick="pick('veg','often',this)" data-en="3–5 times a week"
+                  data-hi="3–5 बार/सप्ताह">3–5 times a week</button>
+                <button class="opt" onclick="pick('veg','daily',this)" data-en="Every day 🥬" data-hi="रोज़ 🥬">Every
+                  day 🥬</button>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-s" onclick="go(2)">←</button>
+              <button class="btn-nxt" id="n3" onclick="go(4)" disabled data-en="Continue →" data-hi="आगे →">Continue
+                →</button>
+            </div>
+          </div>
+
+          <!-- STEP 5 -->
+          <div class="form-step" id="s4">
+            <div class="fq">
+              <div class="fq-label">
+                <span class="hi" data-hi="क्या आपको ये लक्षण हैं? (जो लागू हों सभी चुनें)">क्या आपको ये लक्षण हैं? (जो
+                  लागू हों सभी चुनें)</span>
+                <span class="en" data-en="Any of these symptoms? (select all that apply)">Any of these symptoms? (select
+                  all that apply)</span>
+              </div>
+              <div class="checks" id="sym-checks">
+                <label class="chk-row" onclick="toggleSym(this,'fatigue')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="😴 हमेशा थकान लगती है">😴 हमेशा थकान लगती है</span>
+                    <span class="en" data-en="😴 Constant tiredness / fatigue">😴 Constant tiredness / fatigue</span>
+                  </div>
+                </label>
+                <label class="chk-row" onclick="toggleSym(this,'pale')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="😶 पीली त्वचा या पीले मसूड़े">😶 पीली त्वचा या पीले मसूड़े</span>
+                    <span class="en" data-en="😶 Pale skin or pale gums">😶 Pale skin or pale gums</span>
+                  </div>
+                </label>
+                <label class="chk-row" onclick="toggleSym(this,'dizzy')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="💫 चक्कर या सिरदर्द">💫 चक्कर या सिरदर्द</span>
+                    <span class="en" data-en="💫 Dizziness / frequent headaches">💫 Dizziness / frequent
+                      headaches</span>
+                  </div>
+                </label>
+                <label class="chk-row" onclick="toggleSym(this,'slow-growth')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="📏 बच्चे की धीमी वृद्धि">📏 बच्चे की धीमी वृद्धि</span>
+                    <span class="en" data-en="📏 Child slow growth (for children)">📏 Child slow growth (for
+                      children)</span>
+                  </div>
+                </label>
+                <label class="chk-row" onclick="toggleSym(this,'brittle')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="💅 टूटते नाखून / बाल झड़ना">💅 टूटते नाखून / बाल झड़ना</span>
+                    <span class="en" data-en="💅 Brittle nails / hair loss">💅 Brittle nails / hair loss</span>
+                  </div>
+                </label>
+                <label class="chk-row" onclick="toggleSym(this,'noapp')">
+                  <div class="chk-box">✓</div>
+                  <div class="chk-text">
+                    <span class="hi" data-hi="🍽️ भूख न लगना">🍽️ भूख न लगना</span>
+                    <span class="en" data-en="🍽️ Poor appetite / not feeling hungry">🍽️ Poor appetite / not feeling
+                      hungry</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn-back-s" onclick="go(3)">←</button>
+              <button class="btn-nxt" id="n4" onclick="submitForm()" data-en="🔍 See My Results"
+                data-hi="🔍 परिणाम देखें">🔍 See My Results</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <div id="result-wrap">
+      <div class="card">
+        <div class="risk-banner" id="risk-banner">
+          <div class="risk-icon" id="r-icon">✅</div>
+          <div class="risk-label" id="r-label">LOW RISK</div>
+          <div class="risk-title" id="r-title">Your Nutrition Health Looks Good!</div>
+          <div class="risk-sub" id="r-sub">Keep up the healthy habits.</div>
+          <div class="bmi-pills">
+            <div class="bmi-pill">
+              <div class="bmi-pill-n" id="r-bmi">—</div>
+              <div class="bmi-pill-l" data-en="BMI" data-hi="BMI">BMI</div>
+            </div>
+            <div class="bmi-pill">
+              <div class="bmi-pill-n" id="r-cat" style="font-size:14px;color:var(--amber)">—</div>
+              <div class="bmi-pill-l" data-en="Category" data-hi="श्रेणी">Category</div>
+            </div>
+            <div class="bmi-pill">
+              <div class="bmi-pill-n" id="r-score" style="color:var(--indigo)">—</div>
+              <div class="bmi-pill-l" data-en="Risk Score" data-hi="जोखिम">Risk Score</div>
+            </div>
+          </div>
+        </div>
+        <div class="recs" id="r-recs"></div>
+        <div class="result-actions">
+          <button class="btn btn-ghost btn-sm" onclick="resetAll()">
+            <span data-en="🔄 New Check" data-hi="🔄 नई जांच">🔄 New Check</span>
+          </button>
+          <button class="btn btn-teal btn-sm" onclick="findCentres()">
+            <span data-en="📍 Find Health Centres" data-hi="📍 स्वास्थ्य केंद्र खोजें">📍 Find Health Centres</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HIGH RISK ALERT -->
+      <div class="alert-card danger" id="high-alert" style="display:none">
+        <div class="alert-ico">🚨</div>
+        <div class="alert-txt">
+          <b data-en="Urgent: Please Visit a Health Centre Today" data-hi="जरूरी: आज ही स्वास्थ्य केंद्र जाएं">Urgent:
+            Please Visit a Health Centre Today</b>
+          <span
+            data-en="Your risk score is high. You may be eligible for free iron, vitamin & protein supplements under PM Poshan and ICDS government schemes."
+            data-hi="आपका जोखिम स्कोर अधिक है। PM पोषण और ICDS योजनाओं के तहत मुफ़्त सप्लीमेंट मिल सकते हैं।">
+            Your risk score is high. You may be eligible for free iron, vitamin &amp; protein supplements under PM
+            Poshan and ICDS government schemes.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEALTH CENTRES -->
+    <div id="hc-section" class="card">
+      <div class="hc-header">
+        <h3>📍 <span data-en="Nearest Health Centres" data-hi="नजदीकी स्वास्थ्य केंद्र">Nearest Health Centres</span>
+        </h3>
+        <button class="btn btn-ghost btn-sm" onclick="findCentres()">
+          <span data-en="↻ Refresh" data-hi="↻ रीफ्रेश">↻ Refresh</span>
+        </button>
+      </div>
+      <div id="hc-body">
+        <div class="loc-loading" id="hc-loading" style="display:none">
+          <div class="spinner"></div>
+          <span data-en="Finding centres near you…" data-hi="आपके पास केंद्र खोज रहे हैं…">Finding centres near
+            you…</span>
+        </div>
+        <div class="hc-list" id="hc-list"></div>
+      </div>
+    </div>
+
+    <div class="div"></div>
+  </div><!-- end .page -->
+
+  <footer>
+    <strong>पोषण मित्र</strong> — User Portal<br>
+    Community Service Project · Madhya Pradesh · 2025<br>
+    <span style="margin-top:6px;display:block">🔒 Your data is never shared. Results saved locally on your
+      device.</span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ════════════════════════════════════════════════
+    // STATE
+    // ════════════════════════════════════════════════
+    let lang = 'en', step = 0, syms = [];
+    const F = { age: '', gender: '', ht: 0, wt: 0, meals: '', veg: '' };
+    let localData = JSON.parse(localStorage.getItem('pm_user') || '[]');
+    let userLat = null, userLng = null;
+
+    // ════════════════════════════════════════════════
+    // LANGUAGE
+    // ════════════════════════════════════════════════
+    function setLang(l) {
+      lang = l;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.textContent.includes(l === 'hi' ? 'ह' : 'EN')));
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const val = el.getAttribute('data-' + l) || el.getAttribute('data-en');
+        if (val) el.textContent = val;
+      });
+      document.querySelectorAll('.hi').forEach(el => el.style.display = l === 'hi' ? '' : 'none');
+      document.querySelectorAll('.en').forEach(el => el.style.display = l === 'en' ? '' : 'none');
+    }
+
+    // ════════════════════════════════════════════════
+    // FORM
+    // ════════════════════════════════════════════════
+    function scrollToForm() { document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' }) }
+
+    function pick(field, val, btn) {
+      F[field] = val;
+      btn.closest('.opts').querySelectorAll('.opt').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      validate();
+    }
+
+    function checkHW() {
+      const h = parseFloat(document.getElementById('ht').value);
+      const w = parseFloat(document.getElementById('wt').value);
+      const hint = document.getElementById('bmi-hint');
+      if (h > 50 && w > 5) {
+        F.ht = h; F.wt = w;
+        const bmi = w / ((h / 100) ** 2);
+        const cat = bmi < 18.5 ? 'Underweight ⚠️' : bmi < 25 ? 'Normal ✅' : bmi < 30 ? 'Overweight' : 'Obese';
+        const col = bmi < 18.5 ? 'var(--amber)' : bmi < 25 ? 'var(--green)' : 'var(--red)';
+        hint.innerHTML = `BMI: <strong style="color:${col}">${bmi.toFixed(1)}</strong> — ${cat}`;
+        document.getElementById('n1').disabled = false;
+      } else {
+        hint.textContent = ''; document.getElementById('n1').disabled = true;
+      }
+    }
+
+    function toggleSym(el, key) {
+      el.classList.toggle('on');
+      syms = el.classList.contains('on') ? [...syms, key] : syms.filter(s => s !== key);
+    }
+
+    function validate() {
+      if (step === 0) document.getElementById('n0').disabled = !(F.age && F.gender);
+      if (step === 2) document.getElementById('n2').disabled = !F.meals;
+      if (step === 3) document.getElementById('n3').disabled = !F.veg;
+    }
+
+    function go(n) {
+      document.getElementById('s' + step).classList.remove('on');
+      step = n;
+      document.getElementById('s' + n).classList.add('on');
+      const pct = Math.round(((n + 1) / 5) * 100);
+      document.getElementById('prog').style.width = pct + '%';
+      document.getElementById('step-num').textContent = n + 1;
+      document.getElementById('step-pct').textContent = pct + '%';
+      validate();
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ════════════════════════════════════════════════
+    // AI RISK ENGINE
+    // ════════════════════════════════════════════════
+    function calcRisk() {
+      let sc = 0;
+      const bmi = F.wt / ((F.ht / 100) ** 2);
+      if (bmi < 16) sc += 4; else if (bmi < 17) sc += 3; else if (bmi < 18.5) sc += 2;
+      else if (bmi > 30) sc += 2; else if (bmi > 25) sc += 1;
+      if (F.age === 'under-18') sc += 1;
+      if (F.meals === '1') sc += 3; else if (F.meals === '2') sc += 1;
+      if (F.veg === 'rarely') sc += 2; else if (F.veg === 'sometimes') sc += 1;
+      syms.forEach(s => { sc += ['pale', 'slow-growth'].includes(s) ? 2 : 1; });
+      const level = sc <= 2 ? 'low' : sc <= 6 ? 'moderate' : 'high';
+      const cat = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+      return { sc, level, bmi: bmi.toFixed(1), cat };
+    }
+
+    const RECS = {
+      low: [
+        { en: 'Continue eating green vegetables (palak, methi, chaulai) daily', hi: 'रोज़ हरी सब्जियां (पालक, मेथी, चौलाई) खाना जारी रखें', ico: '🥬' },
+        { en: 'Drink 8–10 glasses of water every day', hi: 'दिन में 8–10 गिलास पानी पिएं', ico: '💧' },
+        { en: 'Include protein: chana, dal, peanuts, milk, eggs', hi: 'प्रोटीन शामिल करें: चना, दाल, मूंगफली, दूध, अंडे', ico: '🥜' },
+        { en: 'Stay active — 30 minutes walking daily', hi: 'सक्रिय रहें — रोज़ 30 मिनट सैर करें', ico: '🏃' },
+      ],
+      moderate: [
+        { en: 'Eat palak, methi or chaulai 4–5 times a week', hi: 'हफ्ते में 4–5 बार पालक, मेथी या चौलाई खाएं', ico: '🥗' },
+        { en: 'Add protein at every meal: dal, chana, egg, milk', hi: 'हर भोजन में प्रोटीन: दाल, चना, अंडा, दूध', ico: '🥚' },
+        { en: 'Eat seasonal fruits: banana, papaya, guava, amla', hi: 'मौसमी फल: केला, पपीता, अमरूद, आंवला', ico: '🍊' },
+        { en: 'Switch to whole grains: bajra, jowar, ragi', hi: 'साबुत अनाज: बाजरा, ज्वार, रागी', ico: '🌾' },
+        { en: 'Visit ASHA worker for iron check-up', hi: 'आयरन जांच के लिए ASHA से मिलें', ico: '💊' },
+      ],
+      high: [
+        { en: 'URGENT: Visit Anganwadi or PHC today', hi: 'अत्यंत जरूरी: आज ही आंगनवाड़ी / PHC जाएं', ico: '🏥' },
+        { en: 'Eat iron-rich foods: palak, chaulai, beetroot, gur', hi: 'आयरन युक्त खाएं: पालक, चौलाई, चुकंदर, गुड़', ico: '🥬' },
+        { en: 'Drink milk + jaggery daily', hi: 'रोज़ दूध + गुड़ पिएं', ico: '🥛' },
+        { en: 'Vitamin C foods for iron absorption: lemon, amla, tomato', hi: 'आयरन के लिए: नींबू, आंवला, टमाटर', ico: '🍋' },
+        { en: 'Request government supplements at nearest PHC', hi: 'नजदीकी PHC से सरकारी सप्लीमेंट मांगें', ico: '💊' },
+      ]
+    };
+
+    // ════════════════════════════════════════════════
+    // SUBMIT
+    // ════════════════════════════════════════════════
+    function submitForm() {
+      const btn = document.getElementById('n4');
+      btn.innerHTML = '<span class="spinner" style="border-top-color:#000"></span>';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        const res = calcRisk();
+
+        // save locally
+        const rec = { ...F, syms, ...res, ts: new Date().toISOString() };
+        localData.push(rec);
+        localStorage.setItem('pm_user', JSON.stringify(localData));
+        document.getElementById('stat-checked').textContent = localData.length;
+
+        // Also try posting to Supabase if configured by admin
+        const sbUrl = localStorage.getItem('sb_url');
+        const sbKey = localStorage.getItem('sb_key');
+        if (sbUrl && sbKey) {
+          fetch(`${sbUrl}/rest/v1/assessments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': sbKey, 'Authorization': `Bearer ${sbKey}`, 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ age: F.age, gender: F.gender, height_cm: F.ht, weight_kg: F.wt, bmi: parseFloat(res.bmi), meals_per_day: F.meals, veggie_freq: F.veg, symptoms: syms, risk_level: res.level, risk_score: res.sc, district: 'MP' })
+          }).catch(() => { });
+        }
+
+        showResult(res);
+        btn.innerHTML = '🔍 See My Results'; btn.disabled = false;
+      }, 900);
+    }
+
+    function showResult(res) {
+      // hide form
+      document.getElementById('form-card').style.display = 'none';
+      document.getElementById('result-wrap').style.display = 'block';
+
+      const icons = { low: '✅', moderate: '⚠️', high: '🚨' };
+      const titles = {
+        low: { en: 'Your Nutrition Health Looks Good! 🎉', hi: 'आपका पोषण स्वास्थ्य अच्छा है! 🎉' },
+        moderate: { en: 'Moderate Risk — Take Action ⚠️', hi: 'मध्यम जोखिम — कदम उठाएं ⚠️' },
+        high: { en: 'High Risk — Please Act Now 🚨', hi: 'उच्च जोखिम — तुरंत ध्यान दें 🚨' },
+      };
+      const subs = {
+        low: { en: 'Keep up your healthy habits.', hi: 'स्वस्थ आदतें बनाए रखें।' },
+        moderate: { en: 'Follow the advice below to improve.', hi: 'नीचे दिए सुझावों का पालन करें।' },
+        high: { en: 'Please visit a health centre immediately.', hi: 'कृपया तुरंत स्वास्थ्य केंद्र जाएं।' },
+      };
+      const labelClass = { low: 'rl-low', moderate: 'rl-mod', high: 'rl-hi' };
+      const bgColors = { low: 'rgba(34,197,94,.06)', moderate: 'rgba(251,191,36,.06)', high: 'rgba(248,113,113,.06)' };
+
+      document.getElementById('risk-banner').style.background = bgColors[res.level];
+      document.getElementById('r-icon').textContent = icons[res.level];
+      const lb = document.getElementById('r-label');
+      lb.textContent = res.level.toUpperCase() + ' RISK';
+      lb.className = 'risk-label ' + labelClass[res.level];
+      document.getElementById('r-title').textContent = (titles[res.level][lang] || titles[res.level].en);
+      document.getElementById('r-sub').textContent = (subs[res.level][lang] || subs[res.level].en);
+      document.getElementById('r-bmi').textContent = res.bmi;
+      document.getElementById('r-cat').textContent = res.cat;
+      document.getElementById('r-score').textContent = res.sc + '/20';
+
+      document.getElementById('r-recs').innerHTML = RECS[res.level].map(r => `
+    <div class="rec"><div class="rec-ico">${r.ico}</div><div class="rec-txt">${r[lang] || r.en}</div></div>`).join('');
+
+      if (res.level === 'high') document.getElementById('high-alert').style.display = 'flex';
+
+      document.getElementById('result-wrap').scrollIntoView({ behavior: 'smooth' });
+      // auto-find centres
+      setTimeout(findCentres, 600);
+    }
+
+    function resetAll() {
+      Object.assign(F, { age: '', gender: '', ht: 0, wt: 0, meals: '', veg: '' }); syms = [];
+      step = 0;
+      document.querySelectorAll('.opt').forEach(b => b.classList.remove('on'));
+      document.querySelectorAll('.chk-row').forEach(b => b.classList.remove('on'));
+      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('on'));
+      document.getElementById('s0').classList.add('on');
+      document.getElementById('prog').style.width = '20%';
+      document.getElementById('step-num').textContent = '1';
+      document.getElementById('step-pct').textContent = '20%';
+      document.getElementById('ht').value = ''; document.getElementById('wt').value = '';
+      document.getElementById('bmi-hint').textContent = '';
+      document.getElementById('n0').disabled = true;
+      document.getElementById('n1').disabled = true;
+      document.getElementById('result-wrap').style.display = 'none';
+      document.getElementById('high-alert').style.display = 'none';
+      document.getElementById('form-card').style.display = 'block';
+      document.getElementById('hc-section').style.display = 'none';
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ════════════════════════════════════════════════
+    // HEALTH CENTRES — GEOLOCATION + MP DATABASE
+    // ════════════════════════════════════════════════
+
+    // Comprehensive MP health centre database with coordinates
+    const MP_CENTRES = [
+      // Bhopal
+      { name: 'Hamidia Hospital', type: 'District Hospital', addr: 'Royal Market, Bhopal, MP', phone: '0755-2540222', lat: 23.2619, lng: 77.4011, city: 'Bhopal' },
+      { name: 'JP Hospital', type: 'Government Hospital', addr: 'Shivaji Nagar, Bhopal, MP', phone: '0755-2661677', lat: 23.2332, lng: 77.4383, city: 'Bhopal' },
+      { name: 'AIIMS Bhopal', type: 'AIIMS', addr: 'Saket Nagar, Bhopal, MP', phone: '0755-2996600', lat: 23.1898, lng: 77.3173, city: 'Bhopal' },
+      { name: 'CHC Berasia', type: 'Community Health Centre', addr: 'Berasia Road, Bhopal, MP', phone: '0755-2871234', lat: 23.6285, lng: 77.4361, city: 'Bhopal' },
+      { name: 'PHC Phanda', type: 'Primary Health Centre', addr: 'Phanda Village, Bhopal District', phone: '0755-2871100', lat: 23.3621, lng: 77.2847, city: 'Bhopal' },
+      // Indore
+      { name: 'MY Hospital (MGM)', type: 'District Hospital', addr: 'MYH Road, Indore, MP', phone: '0731-2527400', lat: 22.7196, lng: 75.8577, city: 'Indore' },
+      { name: 'CHC Sanwer', type: 'Community Health Centre', addr: 'Sanwer, Indore District', phone: '07324-232233', lat: 22.9713, lng: 75.8291, city: 'Indore' },
+      { name: 'PHC Mhow', type: 'Primary Health Centre', addr: 'Mhow, Indore District', phone: '07324-274200', lat: 22.5548, lng: 75.7581, city: 'Indore' },
+      // Jabalpur
+      { name: 'Victoria Hospital', type: 'District Hospital', addr: 'Civil Lines, Jabalpur, MP', phone: '0761-2670600', lat: 23.1715, lng: 79.9421, city: 'Jabalpur' },
+      { name: 'CHC Sihora', type: 'Community Health Centre', addr: 'Sihora, Jabalpur District', phone: '07624-232100', lat: 23.4865, lng: 80.1038, city: 'Jabalpur' },
+      // Gwalior
+      { name: 'Kamla Raja Hospital', type: 'District Hospital', addr: 'City Centre, Gwalior, MP', phone: '0751-2427001', lat: 26.2183, lng: 78.1828, city: 'Gwalior' },
+      { name: 'CHC Dabra', type: 'Community Health Centre', addr: 'Dabra, Gwalior District', phone: '07524-232200', lat: 25.8883, lng: 78.3311, city: 'Gwalior' },
+      // Sagar
+      { name: 'Bundelkhand Medical College', type: 'Medical College Hospital', addr: 'Sagar, MP', phone: '07582-226740', lat: 23.8338, lng: 78.7378, city: 'Sagar' },
+      { name: 'CHC Rehli', type: 'Community Health Centre', addr: 'Rehli, Sagar District', phone: '07582-232500', lat: 23.6274, lng: 79.0614, city: 'Sagar' },
+      // Rewa
+      { name: 'Shyam Shah Medical College', type: 'Medical College Hospital', addr: 'Rewa, MP', phone: '07662-250100', lat: 24.5362, lng: 81.3037, city: 'Rewa' },
+      { name: 'PHC Gurh', type: 'Primary Health Centre', addr: 'Gurh, Rewa District', phone: '07662-280100', lat: 24.3721, lng: 81.5238, city: 'Rewa' },
+      // Satna
+      { name: 'District Hospital Satna', type: 'District Hospital', addr: 'Civil Lines, Satna, MP', phone: '07672-401000', lat: 24.5996, lng: 80.8322, city: 'Satna' },
+      // Shivpuri
+      { name: 'District Hospital Shivpuri', type: 'District Hospital', addr: 'Shivpuri, MP', phone: '07492-233100', lat: 25.4231, lng: 77.6614, city: 'Shivpuri' },
+      { name: 'CHC Kolaras', type: 'Community Health Centre', addr: 'Kolaras, Shivpuri District', phone: '07492-280200', lat: 25.2147, lng: 77.5483, city: 'Shivpuri' },
+      // Ujjain
+      { name: 'District Hospital Ujjain', type: 'District Hospital', addr: 'Deen Dayal Nagar, Ujjain, MP', phone: '0734-2511100', lat: 23.1827, lng: 75.7772, city: 'Ujjain' },
+      { name: 'RD Gardi Medical College', type: 'Medical College Hospital', addr: 'Surasa, Ujjain, MP', phone: '0734-2966900', lat: 23.1524, lng: 75.7618, city: 'Ujjain' },
+      // Anganwadi centres (representative)
+      { name: 'Anganwadi Sector-5 Bhopal', type: 'Anganwadi', addr: 'Sector 5, Kolar Road, Bhopal', phone: '0755-2970100', lat: 23.2103, lng: 77.4762, city: 'Bhopal' },
+      { name: 'Anganwadi Govindpura', type: 'Anganwadi', addr: 'Govindpura, Bhopal, MP', phone: '0755-2584100', lat: 23.2658, lng: 77.4923, city: 'Bhopal' },
+      { name: 'Anganwadi Vijay Nagar', type: 'Anganwadi', addr: 'Vijay Nagar, Indore, MP', phone: '0731-2556100', lat: 22.7533, lng: 75.9049, city: 'Indore' },
+      { name: 'Anganwadi Napier Town', type: 'Anganwadi', addr: 'Napier Town, Jabalpur, MP', phone: '0761-2628100', lat: 23.1653, lng: 79.9302, city: 'Jabalpur' },
+      // PHC rural
+      { name: 'PHC Bamori', type: 'Primary Health Centre', addr: 'Bamori, Guna District, MP', phone: '07542-230100', lat: 24.5836, lng: 77.2219, city: 'Guna' },
+      { name: 'PHC Pichhore', type: 'Primary Health Centre', addr: 'Pichhore, Shivpuri District', phone: '07492-290100', lat: 25.1836, lng: 77.3219, city: 'Shivpuri' },
+      { name: 'PHC Barhi', type: 'Primary Health Centre', addr: 'Barhi, Raisen District, MP', phone: '07482-270100', lat: 23.1836, lng: 78.1219, city: 'Raisen' },
+      { name: 'PHC Silwani', type: 'Primary Health Centre', addr: 'Silwani, Raisen District, MP', phone: '07482-280100', lat: 23.3012, lng: 77.9614, city: 'Raisen' },
+    ];
+
+    function haversine(lat1, lng1, lat2, lng2) {
+      const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function findCentres() {
+      const sec = document.getElementById('hc-section');
+      sec.style.display = 'block';
+      sec.scrollIntoView({ behavior: 'smooth' });
+      const loading = document.getElementById('hc-loading');
+      loading.style.display = 'flex';
+      document.getElementById('hc-list').innerHTML = '';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            loading.style.display = 'none';
+            renderCentres(userLat, userLng);
+          },
+          () => {
+            loading.style.display = 'none';
+            // fallback: show all sorted by Bhopal (MP capital)
+            renderCentres(23.2599, 77.4126, true);
+            showToast('📍 Location not shared — showing MP centres', 'err');
+          },
+          { timeout: 8000 }
+        );
+      } else {
+        loading.style.display = 'none';
+        renderCentres(23.2599, 77.4126, true);
+      }
+    }
+
+    function renderCentres(lat, lng, fallback = false) {
+      const sorted = MP_CENTRES
+        .map(c => ({ ...c, dist: haversine(lat, lng, c.lat, c.lng) }))
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 8);
+
+      const iconMap = { 'District Hospital': '🏥', 'AIIMS': '🏥', 'Medical College Hospital': '🏥', 'Community Health Centre': '🏨', 'Primary Health Centre': '🏥', 'Anganwadi': '👶' };
+
+      document.getElementById('hc-list').innerHTML = sorted.map((c, i) => `
+    <div class="hc-item" onclick="window.open('https://maps.google.com/?q=${c.lat},${c.lng}','_blank')">
+      <div class="hc-num">${iconMap[c.type] || '🏥'}</div>
+      <div class="hc-info">
+        <div class="hc-name">${c.name}</div>
+        <div class="hc-type">${c.type}</div>
+        <div class="hc-addr">${c.addr}</div>
+        <div class="hc-meta">
+          <a class="hc-phone" href="tel:${c.phone}" onclick="event.stopPropagation()">📞 ${c.phone}</a>
+          <span class="hc-dist">📍 ${c.dist < 1 ? (c.dist * 1000).toFixed(0) + 'm' : c.dist.toFixed(1) + 'km'} away</span>
+        </div>
+      </div>
+      <span class="hc-dist-badge">#${i + 1}</span>
+    </div>`).join('');
+
+      if (fallback) {
+        document.getElementById('hc-list').insertAdjacentHTML('afterbegin',
+          `<div class="alert-card info" style="margin:8px 12px 0;border-radius:10px">
+        <div class="alert-ico">📍</div>
+        <div class="alert-txt"><b>Location not available</b>Showing nearest centres in MP. Allow location for accurate results.</div>
+      </div>`);
+      }
+    }
+
+    // ════════════════════════════════════════════════
+    // TOAST
+    // ════════════════════════════════════════════════
+    let toastTimer;
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show ' + (type === 'ok' ? 'ok' : type === 'err' ? 'err' : '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    // ════════════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════════════
+    document.getElementById('stat-checked').textContent = localData.length || '—';
+    setLang('en');
+  </script>
+</body>
+
+</html>

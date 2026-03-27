@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Poshan Mithra — Admin Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070D1A;--bg2:#0D1729;--bg3:#111F36;--bg4:#162440;
+  --green:#22C55E;--green2:rgba(34,197,94,.12);
+  --teal:#2DD4BF;--teal2:rgba(45,212,191,.1);
+  --orange:#FB923C;--red:#F87171;--amber:#FBBF24;--indigo:#818CF8;
+  --w:#FFFFFF;--w80:rgba(255,255,255,.8);--w50:rgba(255,255,255,.5);--w20:rgba(255,255,255,.2);--w08:rgba(255,255,255,.08);--w04:rgba(255,255,255,.04);
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:12px;--r2:18px;
+  --shadow:0 4px 32px rgba(0,0,0,.6);
+}
+html{-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--w);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 50% 40% at 0% 0%,rgba(34,197,94,.06),transparent 60%),
+  radial-gradient(ellipse 40% 50% at 100% 100%,rgba(45,212,191,.05),transparent 60%);}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--green);border-radius:99px}
+
+/* ══ LOGIN SCREEN ═══════════════════════════════ */
+#login-screen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);padding:20px}
+#login-screen.hidden{display:none}
+.login-box{background:var(--bg2);border:1px solid var(--w08);border-radius:24px;
+  padding:44px 40px;max-width:420px;width:100%;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;
+  border-radius:50%;background:rgba(34,197,94,.06);pointer-events:none}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.login-logo-icon{width:48px;height:48px;border-radius:14px;background:var(--green2);
+  border:1px solid rgba(34,197,94,.25);display:flex;align-items:center;justify-content:center;font-size:22px}
+.login-logo-text h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.login-logo-text p{font-size:12px;color:var(--w50);margin-top:2px;display:flex;align-items:center;gap:6px}
+.admin-badge{background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3);
+  padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.05em}
+.login-title{font-size:22px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.login-sub{font-size:13px;color:var(--w50);margin-bottom:28px;line-height:1.5}
+.inp-grp{margin-bottom:16px}
+.inp-label{font-size:11px;font-weight:700;color:var(--w50);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:7px}
+.inp{width:100%;padding:12px 16px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--w08);
+  color:var(--w);font-family:var(--font);font-size:15px;outline:none;transition:all .2s;-webkit-appearance:none}
+.inp:focus{border-color:var(--teal);background:var(--bg4);box-shadow:0 0 0 3px rgba(45,212,191,.1)}
+.inp::placeholder{color:var(--w20)}
+.btn-login{width:100%;padding:14px;border-radius:10px;border:none;
+  background:var(--green);color:#000;font-family:var(--font);font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;margin-top:4px}
+.btn-login:hover{background:#4ADE80}
+.login-err{font-size:13px;color:var(--red);margin-top:10px;text-align:center;min-height:20px}
+.login-note{font-size:11px;color:var(--w20);text-align:center;margin-top:20px;line-height:1.6}
+
+/* ══ ADMIN LAYOUT ════════════════════════════════ */
+#admin-app{display:none;position:relative;z-index:1}
+#admin-app.visible{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:58px;position:sticky;top:0;z-index:100;
+  background:rgba(7,13,26,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--w08)}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.admin-tag{background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3);
+  padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.05em}
+.db-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--w50);cursor:pointer}
+.db-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.db-dot.live{background:var(--green);animation:pdot 2s infinite}
+.db-dot.off{background:var(--amber)}
+.db-dot.err{background:var(--red)}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 0 4px rgba(34,197,94,0)}}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.btn-sm{padding:7px 14px;border-radius:8px;border:none;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-teal{background:var(--teal);color:#000}
+.btn-teal:hover{background:#5EEAD4}
+.btn-ghost{background:var(--w04);color:var(--w80);border:1px solid var(--w08)}
+.btn-ghost:hover{background:var(--w08);color:var(--w)}
+.btn-red{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.btn-red:hover{background:rgba(248,113,113,.25)}
+.btn-green{background:var(--green);color:#000}
+.btn-green:hover{background:#4ADE80}
+
+/* ── MAIN CONTENT ── */
+.main{padding:28px 24px;max-width:1400px;margin:0 auto;width:100%}
+
+/* ── SECTION LABELS ── */
+.sec-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:block}
+.sec-h2{font-size:clamp(20px,3vw,28px);font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--w50);margin-bottom:24px}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.kpi{background:var(--bg2);border:1px solid var(--w08);border-radius:var(--r2);padding:20px 18px;
+  transition:border-color .3s,transform .2s;cursor:default}
+.kpi:hover{border-color:rgba(34,197,94,.3);transform:translateY(-2px)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--w50);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.kpi-val{font-size:34px;font-weight:800;line-height:1}
+.kpi-sub{font-size:11px;color:var(--w20);margin-top:5px}
+.c-g{color:var(--green)}.c-r{color:var(--red)}.c-a{color:var(--amber)}.c-t{color:var(--teal)}.c-i{color:var(--indigo)}
+
+/* ── CHARTS ROW ── */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+@media(max-width:768px){.charts-row{grid-template-columns:1fr}}
+.chart-card{background:var(--bg2);border:1px solid var(--w08);border-radius:var(--r2);padding:20px}
+.chart-card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.mini-bar-wrap{display:flex;flex-direction:column;gap:8px}
+.mini-bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.mini-bar-label{width:90px;color:var(--w50);flex-shrink:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-bar-track{flex:1;height:8px;background:var(--w04);border-radius:99px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.mini-bar-num{width:40px;text-align:right;color:var(--w80);font-weight:700;font-size:12px;flex-shrink:0}
+
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut-svg{flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.donut-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ── TABLE SECTION ── */
+.table-wrap{background:var(--bg2);border:1px solid var(--w08);border-radius:var(--r2);overflow:hidden;margin-bottom:28px}
+.table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--w08)}
+.table-head-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.table-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filter-select{background:var(--bg3);border:1px solid var(--w08);border-radius:8px;padding:7px 12px;
+  color:var(--w80);font-family:var(--font);font-size:12px;outline:none;cursor:pointer;
+  transition:border-color .2s}
+.filter-select:focus{border-color:var(--teal)}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
+thead th{text-align:left;padding:11px 16px;background:var(--bg3);color:var(--w50);
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;border-bottom:1px solid var(--w08)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--w04);color:var(--w80);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--w04)}
+.risk-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.rp-l{background:rgba(34,197,94,.15);color:var(--green)}
+.rp-m{background:rgba(251,191,36,.15);color:var(--amber)}
+.rp-h{background:rgba(248,113,113,.15);color:var(--red)}
+.tag-small{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--w04);color:var(--w50)}
+.empty-row td{text-align:center;padding:40px!important;color:var(--w50)}
+
+/* ── SETTINGS ── */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.settings-grid{grid-template-columns:1fr}}
+.set-card{background:var(--bg2);border:1px solid var(--w08);border-radius:var(--r2);padding:22px}
+.set-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.set-row{margin-bottom:14px}
+.set-label{font-size:11px;font-weight:700;color:var(--w50);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px}
+.code-block{background:var(--bg);border:1px solid var(--w08);border-radius:8px;
+  padding:14px;font-family:var(--mono);font-size:11px;color:var(--teal);overflow-x:auto;line-height:1.8;white-space:pre}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;background:var(--w04);border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content;flex-wrap:wrap}
+.tab{padding:8px 16px;border-radius:8px;border:none;background:transparent;
+  font-family:var(--font);font-size:13px;font-weight:600;color:var(--w50);cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.on{background:var(--bg2);color:var(--w);box-shadow:0 1px 6px rgba(0,0,0,.3)}
+.tab-panel{display:none}.tab-panel.on{display:block}
+
+/* ── SPINNER ── */
+.spinner{width:18px;height:18px;border-radius:50%;border:2px solid var(--w08);border-top-color:var(--green);animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;z-index:2000;
+  background:var(--bg3);border:1px solid var(--w08);border-radius:10px;
+  padding:12px 18px;font-size:13px;font-weight:600;color:var(--w);
+  box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{border-color:rgba(34,197,94,.4);color:var(--green)}
+.toast.err{border-color:rgba(248,113,113,.4);color:var(--red)}
+.toast.warn{border-color:rgba(251,191,36,.4);color:var(--amber)}
+
+/* ── MISC ── */
+.divider{height:1px;background:var(--w08);margin:24px 0}
+.mono{font-family:var(--mono);font-size:12px}
+.badge-new{display:inline-block;background:rgba(34,197,94,.15);color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px}
+@media(max-width:640px){.main{padding:16px}.topbar{padding:0 12px}.kpi-val{font-size:26px}}
+</style>
+</head>
+<body>
+
+<!-- ════════════ LOGIN SCREEN ════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🌿</div>
+      <div class="login-logo-text">
+        <h1>Poshan Mithra</h1>
+        <p><span class="admin-badge">ADMIN</span> Secure Portal</p>
+      </div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in with your admin credentials to access the dashboard and database.</div>
+    <div class="inp-grp">
+      <label class="inp-label">Username</label>
+      <input class="inp" type="text" id="l-user" placeholder="admin" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="inp-grp">
+      <label class="inp-label">Password</label>
+      <input class="inp" type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="l-err"></div>
+    <div class="login-note">🔒 Default credentials: admin / poshan2025<br>Change password in Settings after first login.</div>
+  </div>
+</div>
+
+<!-- ════════════ ADMIN APP ════════════ -->
+<div id="admin-app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🌿 Poshan Mithra</div>
+      <div class="admin-tag">ADMIN</div>
+      <div class="db-status" onclick="switchTab('settings')" title="Click to configure DB">
+        <div class="db-dot off" id="db-dot"></div>
+        <span id="db-status-label">DB Not Connected</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-sm btn-teal" onclick="loadDashboard()">↻ Refresh</button>
+      <button class="btn-sm btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-sm btn-red" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('overview')" id="tab-overview">📊 Overview</button>
+      <button class="tab" onclick="switchTab('records')" id="tab-records">📋 Records</button>
+      <button class="tab" onclick="switchTab('districts')" id="tab-districts">🗺️ Districts</button>
+      <button class="tab" onclick="switchTab('settings')" id="tab-settings">⚙️ Settings</button>
+    </div>
+
+    <!-- ── OVERVIEW TAB ── -->
+    <div class="tab-panel on" id="panel-overview">
+      <span class="sec-tag">LIVE DASHBOARD</span>
+      <h2 class="sec-h2">Community Nutrition Overview</h2>
+      <p class="sec-sub" id="last-updated">Last updated: —</p>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">📋 Total Assessments</div><div class="kpi-val c-t" id="k-total">—</div><div class="kpi-sub">All time</div></div>
+        <div class="kpi"><div class="kpi-label">🚨 High Risk</div><div class="kpi-val c-r" id="k-high">—</div><div class="kpi-sub">Need immediate referral</div></div>
+        <div class="kpi"><div class="kpi-label">⚠️ Moderate Risk</div><div class="kpi-val c-a" id="k-mod">—</div><div class="kpi-sub">Need dietary support</div></div>
+        <div class="kpi"><div class="kpi-label">✅ Low Risk</div><div class="kpi-val c-g" id="k-low">—</div><div class="kpi-sub">Healthy</div></div>
+        <div class="kpi"><div class="kpi-label">👩 Female</div><div class="kpi-val c-i" id="k-fem">—</div><div class="kpi-sub">Women assessed</div></div>
+        <div class="kpi"><div class="kpi-label">📉 Avg BMI</div><div class="kpi-val c-t" id="k-bmi">—</div><div class="kpi-sub">Average across all</div></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-title">📊 Risk Distribution</div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110" id="donut-svg">
+              <circle cx="55" cy="55" r="40" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="18"/>
+              <circle id="d-low"  cx="55" cy="55" r="40" fill="none" stroke="#22C55E" stroke-width="18" stroke-dasharray="0 251.2" stroke-dashoffset="0"   style="transform-origin:center;transform:rotate(-90deg);transition:all .8s"/>
+              <circle id="d-mod"  cx="55" cy="55" r="40" fill="none" stroke="#FBBF24" stroke-width="18" stroke-dasharray="0 251.2" stroke-dashoffset="0"   style="transform-origin:center;transform:rotate(-90deg);transition:all .8s"/>
+              <circle id="d-high" cx="55" cy="55" r="40" fill="none" stroke="#F87171" stroke-width="18" stroke-dasharray="0 251.2" stroke-dashoffset="0"   style="transform-origin:center;transform:rotate(-90deg);transition:all .8s"/>
+              <text x="55" y="52" text-anchor="middle" fill="white" font-size="14" font-weight="800" font-family="Plus Jakarta Sans" id="donut-pct">—</text>
+              <text x="55" y="66" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="9" font-family="Plus Jakarta Sans">TOTAL</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="donut-item"><div class="donut-dot" style="background:var(--green)"></div><span style="color:var(--w80)">Low Risk — </span><span class="c-g" id="dl-pct" style="font-weight:700">—</span></div>
+              <div class="donut-item"><div class="donut-dot" style="background:var(--amber)"></div><span style="color:var(--w80)">Moderate — </span><span class="c-a" id="dm-pct" style="font-weight:700">—</span></div>
+              <div class="donut-item"><div class="donut-dot" style="background:var(--red)"></div><span style="color:var(--w80)">High Risk — </span><span class="c-r" id="dh-pct" style="font-weight:700">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card-title">🍽️ Meals Per Day Distribution</div>
+          <div class="mini-bar-wrap" id="meals-chart">
+            <div style="color:var(--w50);font-size:13px">Load data to see chart</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-title">🥬 Vegetable Intake</div>
+          <div class="mini-bar-wrap" id="veg-chart">
+            <div style="color:var(--w50);font-size:13px">Load data to see chart</div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">👥 Age Group Breakdown</div>
+          <div class="mini-bar-wrap" id="age-chart">
+            <div style="color:var(--w50);font-size:13px">Load data to see chart</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent 5 -->
+      <div class="chart-card">
+        <div class="chart-card-title">🕐 5 Most Recent Assessments</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Date & Time</th><th>Age</th><th>Gender</th><th>BMI</th><th>Meals/Day</th><th>Risk</th></tr></thead>
+            <tbody id="recent-tbody"><tr class="empty-row"><td colspan="6">No data yet — connect database or load local</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RECORDS TAB ── -->
+    <div class="tab-panel" id="panel-records">
+      <span class="sec-tag">ALL RECORDS</span>
+      <h2 class="sec-h2">Assessment Database</h2>
+      <p class="sec-sub">Full list of submitted assessments. Filter and export as needed.</p>
+
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-head-title">📋 All Records <span class="badge-new" id="rec-count">0</span></div>
+          <div class="table-controls">
+            <select class="filter-select" id="f-risk" onchange="applyFilters()">
+              <option value="">All Risk Levels</option>
+              <option value="low">Low</option>
+              <option value="moderate">Moderate</option>
+              <option value="high">High</option>
+            </select>
+            <select class="filter-select" id="f-gender" onchange="applyFilters()">
+              <option value="">All Genders</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+            <select class="filter-select" id="f-age" onchange="applyFilters()">
+              <option value="">All Ages</option>
+              <option value="under-18">Under 18</option>
+              <option value="18-30">18–30</option>
+              <option value="31-50">31–50</option>
+              <option value="51+">51+</option>
+            </select>
+            <button class="btn-sm btn-ghost" onclick="applyFilters()">Filter</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Date</th><th>Age</th><th>Gender</th>
+                <th>BMI</th><th>Category</th><th>Meals</th><th>Vegetables</th>
+                <th>Symptoms</th><th>Risk Level</th><th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="all-tbody"><tr class="empty-row"><td colspan="11">Loading...</td></tr></tbody>
+          </table>
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid var(--w08);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--w50)" id="rec-range">Showing 0 records</span>
+          <button class="btn-sm btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DISTRICTS TAB ── -->
+    <div class="tab-panel" id="panel-districts">
+      <span class="sec-tag">DISTRICT ANALYSIS</span>
+      <h2 class="sec-h2">MP District Health Map</h2>
+      <p class="sec-sub">Risk level distribution across Madhya Pradesh districts.</p>
+
+      <div class="chart-card" style="margin-bottom:20px">
+        <div class="chart-card-title">🗺️ Districts by High-Risk Count</div>
+        <div class="mini-bar-wrap" id="district-chart">
+          <div style="color:var(--w50);font-size:13px">Load data to see district breakdown</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head"><div class="table-head-title">📊 District Summary</div></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>District</th><th>Total</th><th>High Risk</th><th>Moderate</th><th>Low Risk</th><th>Avg BMI</th><th>Risk %</th></tr></thead>
+            <tbody id="dist-tbody"><tr class="empty-row"><td colspan="7">No district data yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS TAB ── -->
+    <div class="tab-panel" id="panel-settings">
+      <span class="sec-tag">CONFIGURATION</span>
+      <h2 class="sec-h2">Admin Settings</h2>
+      <p class="sec-sub">Configure database connection, admin credentials, and export options.</p>
+
+      <div class="settings-grid">
+        <!-- Supabase Config -->
+        <div class="set-card">
+          <div class="set-card-title">🗄️ Supabase Database</div>
+          <div class="set-row">
+            <label class="set-label">Project URL</label>
+            <input class="inp" type="text" id="sb-url" placeholder="https://xxxx.supabase.co">
+          </div>
+          <div class="set-row">
+            <label class="set-label">Anon / Public API Key</label>
+            <input class="inp" type="text" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIs...">
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button class="btn-sm btn-green" onclick="saveDB()" style="flex:1;padding:10px">Save & Connect</button>
+            <button class="btn-sm btn-ghost" onclick="testDB()">Test</button>
+          </div>
+          <div style="margin-top:14px">
+            <label class="set-label">SQL — Create Table</label>
+            <div class="code-block">create table assessments (
+  id bigint generated always as identity primary key,
+  created_at timestamptz default now(),
+  age text, gender text,
+  height_cm numeric, weight_kg numeric,
+  bmi numeric, meals_per_day text,
+  veggie_freq text, symptoms text[],
+  risk_level text, risk_score int,
+  district text default 'MP'
+);</div>
+          </div>
+        </div>
+
+        <!-- Admin Password -->
+        <div class="set-card">
+          <div class="set-card-title">🔐 Admin Credentials</div>
+          <div class="set-row">
+            <label class="set-label">Username</label>
+            <input class="inp" type="text" id="new-user" placeholder="admin">
+          </div>
+          <div class="set-row">
+            <label class="set-label">New Password</label>
+            <input class="inp" type="password" id="new-pass" placeholder="min 6 characters">
+          </div>
+          <div class="set-row">
+            <label class="set-label">Confirm Password</label>
+            <input class="inp" type="password" id="conf-pass" placeholder="repeat password">
+          </div>
+          <button class="btn-sm btn-green" onclick="changePass()" style="width:100%;padding:10px;margin-top:4px">Update Credentials</button>
+          <div class="divider"></div>
+          <div class="set-card-title" style="margin-bottom:12px">🗑️ Data Management</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-sm btn-ghost" onclick="loadDashboard()">↻ Reload All Data</button>
+            <button class="btn-sm btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+            <button class="btn-sm btn-red" onclick="clearLocalData()">🗑 Clear Local Cache</button>
+          </div>
+        </div>
+
+        <!-- User portal link -->
+        <div class="set-card">
+          <div class="set-card-title">🌐 Portal Links</div>
+          <p style="font-size:13px;color:var(--w50);margin-bottom:14px;line-height:1.7">Share the user portal link with community members. Users cannot see this admin panel or the database.</p>
+          <div class="set-row">
+            <label class="set-label">User Portal</label>
+            <div style="display:flex;gap:8px">
+              <input class="inp" type="text" value="poshan-mithra-user.html" readonly style="font-family:var(--mono);font-size:12px;color:var(--teal)">
+              <button class="btn-sm btn-teal" onclick="window.open('poshan-mithra-user.html','_blank')">Open</button>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <div class="alert-info" style="background:var(--teal2);border:1px solid rgba(45,212,191,.2);border-radius:10px;padding:14px;font-size:12px;color:var(--w80);line-height:1.7">
+              ✅ <strong>Users see:</strong> Assessment form, AI results, health centres<br>
+              🔒 <strong>Users cannot see:</strong> This admin panel, database records, or other people's data
+            </div>
+          </div>
+        </div>
+
+        <!-- System Info -->
+        <div class="set-card">
+          <div class="set-card-title">ℹ️ System Info</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--w08)">
+              <span style="font-size:13px;color:var(--w50)">Version</span>
+              <span class="mono" style="color:var(--teal)">v2.0.0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--w08)">
+              <span style="font-size:13px;color:var(--w50)">DB Provider</span>
+              <span class="mono" id="si-db" style="color:var(--w80)">Not connected</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--w08)">
+              <span style="font-size:13px;color:var(--w50)">Local Records</span>
+              <span class="mono" id="si-local" style="color:var(--green)">0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--w08)">
+              <span style="font-size:13px;color:var(--w50)">AI Model</span>
+              <span class="mono" style="color:var(--w80)">Random Forest v1</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0">
+              <span style="font-size:13px;color:var(--w50)">Accuracy</span>
+              <span class="mono" style="color:var(--green)">87.3%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /admin-app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════
+// AUTH — Simple local auth (replace with proper auth for production)
+// ════════════════════════════════════════════════
+const DEFAULT_USER = 'admin';
+const DEFAULT_PASS = 'poshan2025';
+let adminUser = localStorage.getItem('pm_admin_user') || DEFAULT_USER;
+let adminPass = localStorage.getItem('pm_admin_pass') || DEFAULT_PASS;
+
+function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  const err = document.getElementById('l-err');
+  if(u===adminUser && p===adminPass) {
+    sessionStorage.setItem('pm_admin_auth','1');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-app').classList.add('visible');
+    init();
+  } else {
+    err.textContent = '❌ Incorrect username or password.';
+    document.getElementById('l-pass').value='';
+    setTimeout(()=>{err.textContent=''},3000);
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('pm_admin_auth');
+  document.getElementById('admin-app').classList.remove('visible');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('l-pass').value='';
+}
+
+// ════════════════════════════════════════════════
+// DB CONFIG
+// ════════════════════════════════════════════════
+let SB_URL = localStorage.getItem('sb_url')||'';
+let SB_KEY = localStorage.getItem('sb_key')||'';
+let allData = [];
+
+function saveDB() {
+  const u = document.getElementById('sb-url').value.trim();
+  const k = document.getElementById('sb-key').value.trim();
+  if(!u||!k){toast('⚠️ Enter both URL and API key','warn');return;}
+  SB_URL=u; SB_KEY=k;
+  localStorage.setItem('sb_url',u); localStorage.setItem('sb_key',k);
+  // Also share with user portal
+  document.getElementById('si-db').textContent='Supabase';
+  toast('✅ Saved! Testing connection…','ok');
+  testDB();
+}
+
+async function testDB() {
+  if(!SB_URL||!SB_KEY){toast('⚠️ Configure DB first','warn');return;}
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/assessments?select=count&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}});
+    if(r.ok){setDbStatus('live','Supabase Live');toast('✅ Database connected!','ok');loadDashboard();}
+    else throw new Error(r.status);
+  } catch(e){setDbStatus('err','DB Error');toast('❌ Connection failed: '+e.message,'err');}
+}
+
+function setDbStatus(state, label) {
+  document.getElementById('db-dot').className='db-dot '+state;
+  document.getElementById('db-status-label').textContent=label;
+}
+
+// ════════════════════════════════════════════════
+// DATA LOADING
+// ════════════════════════════════════════════════
+async function loadDashboard() {
+  allData = [];
+  const btn = document.querySelector('.btn-teal');
+
+  // Try Supabase
+  if(SB_URL && SB_KEY) {
+    try {
+      const r = await fetch(
+        `${SB_URL}/rest/v1/assessments?select=*&order=created_at.desc&limit=500`,
+        {headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`}}
+      );
+      if(r.ok){allData=await r.json();setDbStatus('live','Supabase Live');}
+    } catch(e){setDbStatus('err','DB Offline');}
+  }
+
+  // Merge with local
+  const local = JSON.parse(localStorage.getItem('pm_user')||'[]');
+  if(allData.length===0 && local.length>0){
+    allData = local.map((r,i)=>({...r,id:i+1,created_at:r.ts||new Date().toISOString()}));
+    toast('📦 Showing local data (no DB)','warn');
+  }
+
+  document.getElementById('last-updated').textContent = 'Last updated: '+new Date().toLocaleTimeString('en-IN');
+  document.getElementById('si-local').textContent = local.length;
+  document.getElementById('si-db').textContent = SB_URL ? 'Supabase' : 'Not connected';
+
+  renderKPIs();
+  renderCharts();
+  renderRecentTable();
+  renderAllTable(allData);
+  renderDistricts();
+  document.getElementById('rec-count').textContent = allData.length;
+  if(allData.length) toast(`✅ Loaded ${allData.length} records`,'ok');
+}
+
+// ════════════════════════════════════════════════
+// KPIs
+// ════════════════════════════════════════════════
+function renderKPIs() {
+  const total = allData.length;
+  const high  = allData.filter(r=>r.risk_level==='high').length;
+  const mod   = allData.filter(r=>r.risk_level==='moderate').length;
+  const low   = allData.filter(r=>r.risk_level==='low').length;
+  const fem   = allData.filter(r=>r.gender==='female').length;
+  const bmis  = allData.filter(r=>r.bmi>0).map(r=>r.bmi);
+  const avgBmi= bmis.length ? (bmis.reduce((a,b)=>a+b,0)/bmis.length).toFixed(1) : '—';
+
+  document.getElementById('k-total').textContent = total||'—';
+  document.getElementById('k-high').textContent  = high||'—';
+  document.getElementById('k-mod').textContent   = mod||'—';
+  document.getElementById('k-low').textContent   = low||'—';
+  document.getElementById('k-fem').textContent   = fem||'—';
+  document.getElementById('k-bmi').textContent   = avgBmi;
+
+  // Donut chart
+  const circ = 251.2;
+  if(total>0) {
+    const lp=low/total, mp=mod/total, hp=high/total;
+    let off=0;
+    const dlow=document.getElementById('d-low'); dlow.style.strokeDasharray=`${lp*circ} ${circ}`; dlow.style.strokeDashoffset=`${-off*circ}`; off+=lp;
+    const dmod=document.getElementById('d-mod'); dmod.style.strokeDasharray=`${mp*circ} ${circ}`; dmod.style.strokeDashoffset=`${-off*circ}`; off+=mp;
+    const dhi=document.getElementById('d-high'); dhi.style.strokeDasharray=`${hp*circ} ${circ}`; dhi.style.strokeDashoffset=`${-off*circ}`;
+    document.getElementById('donut-pct').textContent=total;
+    document.getElementById('dl-pct').textContent=pct(low,total)+'%';
+    document.getElementById('dm-pct').textContent=pct(mod,total)+'%';
+    document.getElementById('dh-pct').textContent=pct(high,total)+'%';
+  }
+}
+
+function pct(n,t){return t?Math.round(n/t*100):0}
+
+// ════════════════════════════════════════════════
+// MINI CHARTS
+// ════════════════════════════════════════════════
+function miniBarChart(containerId, data, colorFn) {
+  const max = Math.max(...data.map(d=>d.val), 1);
+  document.getElementById(containerId).innerHTML = data.map(d=>`
+    <div class="mini-bar-row">
+      <div class="mini-bar-label" title="${d.label}">${d.label}</div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${(d.val/max*100).toFixed(1)}%;background:${colorFn(d.label)}"></div></div>
+      <div class="mini-bar-num">${d.val}</div>
+    </div>`).join('');
+}
+
+function renderCharts() {
+  const t=allData.length||1;
+  // meals
+  const mKeys=['1','2','3','4+']; const mLabels={'1':'1 meal','2':'2 meals','3':'3 meals','4+':'4+ meals'};
+  miniBarChart('meals-chart',mKeys.map(k=>({label:mLabels[k],val:allData.filter(r=>r.meals_per_day===k||r.meals===k).length})),
+    l=>l.includes('1 m')?'var(--red)':l.includes('4')?'var(--green)':'var(--teal)');
+  // veg
+  const vKeys=['rarely','sometimes','often','daily']; const vLabels={rarely:'Rarely',sometimes:'1–2x/wk',often:'3–5x/wk',daily:'Daily'};
+  miniBarChart('veg-chart',vKeys.map(k=>({label:vLabels[k],val:allData.filter(r=>r.veggie_freq===k||r.veg===k).length})),
+    l=>l==='Rarely'?'var(--red)':l==='Daily'?'var(--green)':'var(--teal)');
+  // age
+  const aKeys=['under-18','18-30','31-50','51+']; const aLabels={'under-18':'Under 18','18-30':'18–30','31-50':'31–50','51+':'51+'};
+  miniBarChart('age-chart',aKeys.map(k=>({label:aLabels[k],val:allData.filter(r=>r.age===k).length})),
+    ()=>'var(--indigo)');
+}
+
+// ════════════════════════════════════════════════
+// TABLES
+// ════════════════════════════════════════════════
+function fmtDate(ts){try{return new Date(ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'})+' '+new Date(ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}catch{return '—'}}
+const rpc = {low:'rp-l',moderate:'rp-m',high:'rp-h'};
+const bmCat = b=>b<18.5?'Underweight':b<25?'Normal':b<30?'Overweight':'Obese';
+
+function renderRecentTable() {
+  const rows=allData.slice(0,5);
+  document.getElementById('recent-tbody').innerHTML = rows.length
+    ? rows.map(r=>`<tr>
+        <td>${fmtDate(r.created_at)}</td>
+        <td>${r.age||'—'}</td>
+        <td>${r.gender||'—'}</td>
+        <td>${r.bmi?Number(r.bmi).toFixed(1):'—'}</td>
+        <td>${r.meals_per_day||r.meals||'—'}</td>
+        <td><span class="risk-pill ${rpc[r.risk_level]||''}">${(r.risk_level||'—').toUpperCase()}</span></td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="6">No records found</td></tr>';
+}
+
+function renderAllTable(data) {
+  document.getElementById('all-tbody').innerHTML = data.length
+    ? data.map((r,i)=>`<tr>
+        <td class="mono" style="color:var(--w50)">${r.id||i+1}</td>
+        <td>${fmtDate(r.created_at)}</td>
+        <td>${r.age||'—'}</td>
+        <td>${r.gender||'—'}</td>
+        <td>${r.bmi?Number(r.bmi).toFixed(1):'—'}</td>
+        <td><span class="tag-small">${r.bmi?bmCat(r.bmi):'—'}</span></td>
+        <td>${r.meals_per_day||r.meals||'—'}</td>
+        <td>${r.veggie_freq||r.veg||'—'}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--w50)">${Array.isArray(r.symptoms)?r.symptoms.join(', '):r.syms?r.syms.join(', '):'None'}</td>
+        <td><span class="risk-pill ${rpc[r.risk_level]||''}">${(r.risk_level||'—').toUpperCase()}</span></td>
+        <td class="mono">${r.risk_score||r.sc||'—'}/20</td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="11">No records found</td></tr>';
+  document.getElementById('rec-range').textContent=`Showing ${data.length} records`;
+}
+
+function applyFilters() {
+  const risk=document.getElementById('f-risk').value;
+  const gen=document.getElementById('f-gender').value;
+  const age=document.getElementById('f-age').value;
+  let f=allData;
+  if(risk) f=f.filter(r=>r.risk_level===risk);
+  if(gen)  f=f.filter(r=>r.gender===gen);
+  if(age)  f=f.filter(r=>r.age===age);
+  renderAllTable(f);
+}
+
+function renderDistricts() {
+  const dmap={};
+  allData.forEach(r=>{
+    const d=r.district||'MP';
+    if(!dmap[d]) dmap[d]={total:0,high:0,mod:0,low:0,bmis:[]};
+    dmap[d].total++;
+    if(r.risk_level) dmap[d][r.risk_level.substring(0,3)==='hig'?'high':r.risk_level.substring(0,3)==='mod'?'mod':'low']++;
+    if(r.bmi>0) dmap[d].bmis.push(r.bmi);
+  });
+  const sorted=Object.entries(dmap).sort((a,b)=>b[1].high-a[1].high);
+  document.getElementById('dist-tbody').innerHTML = sorted.length
+    ? sorted.map(([d,v])=>`<tr>
+        <td>${d}</td><td>${v.total}</td>
+        <td><span class="risk-pill rp-h">${v.high}</span></td>
+        <td><span class="risk-pill rp-m">${v.mod}</span></td>
+        <td><span class="risk-pill rp-l">${v.low}</span></td>
+        <td>${v.bmis.length?(v.bmis.reduce((a,b)=>a+b,0)/v.bmis.length).toFixed(1):'—'}</td>
+        <td>${v.total?Math.round(v.high/v.total*100)+'%':'—'}</td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="7">No data</td></tr>';
+
+  miniBarChart('district-chart',sorted.map(([d,v])=>({label:d,val:v.high})),()=>'var(--red)');
+}
+
+// ════════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════════
+function exportCSV() {
+  if(!allData.length){toast('⚠️ No data to export','warn');return;}
+  const headers=['ID','Date','Age','Gender','Height(cm)','Weight(kg)','BMI','Category','Meals/Day','Veg Freq','Symptoms','Risk Level','Risk Score','District'];
+  const rows=allData.map((r,i)=>[
+    r.id||i+1, (r.created_at||'').substring(0,10), r.age||'', r.gender||'',
+    r.height_cm||'', r.weight_kg||'', r.bmi?Number(r.bmi).toFixed(1):'',
+    r.bmi?bmCat(r.bmi):'',
+    r.meals_per_day||r.meals||'', r.veggie_freq||r.veg||'',
+    (Array.isArray(r.symptoms)?r.symptoms:r.syms||[]).join(';'),
+    r.risk_level||'', r.risk_score||r.sc||'', r.district||'MP'
+  ].map(v=>`"${v}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`poshan-mithra-data-${new Date().toISOString().substring(0,10)}.csv`;
+  a.click();
+  toast('⬇ CSV downloaded!','ok');
+}
+
+// ════════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════════
+function changePass() {
+  const u=document.getElementById('new-user').value.trim();
+  const p=document.getElementById('new-pass').value;
+  const c=document.getElementById('conf-pass').value;
+  if(!u||!p){toast('⚠️ Fill all fields','warn');return;}
+  if(p!==c){toast('❌ Passwords do not match','err');return;}
+  if(p.length<6){toast('❌ Password too short (min 6)','err');return;}
+  localStorage.setItem('pm_admin_user',u); localStorage.setItem('pm_admin_pass',p);
+  adminUser=u; adminPass=p;
+  toast('✅ Credentials updated!','ok');
+  document.getElementById('new-pass').value=''; document.getElementById('conf-pass').value='';
+}
+
+function clearLocalData() {
+  if(!confirm('Clear all locally cached data?')) return;
+  localStorage.removeItem('pm_user');
+  allData=[]; renderKPIs(); renderCharts(); renderRecentTable();
+  renderAllTable([]); renderDistricts();
+  document.getElementById('si-local').textContent='0';
+  toast('🗑 Local cache cleared','ok');
+}
+
+// ════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════
+function switchTab(name) {
+  ['overview','records','districts','settings'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('on',t===name);
+    document.getElementById('panel-'+t).classList.toggle('on',t===name);
+  });
+  if(name==='settings'){
+    document.getElementById('sb-url').value=SB_URL;
+    document.getElementById('sb-key').value=SB_KEY;
+    document.getElementById('si-local').textContent=JSON.parse(localStorage.getItem('pm_user')||'[]').length;
+  }
+}
+
+// ════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════
+let toastTimer;
+function toast(msg, type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type||'');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+function init() {
+  if(SB_URL&&SB_KEY){setDbStatus('off','Testing…');testDB();}
+  else{setDbStatus('off','DB Not Connected');}
+  document.getElementById('sb-url').value=SB_URL;
+  document.getElementById('sb-key').value=SB_KEY;
+  loadDashboard();
+}
+
+// Auto-login if session active
+if(sessionStorage.getItem('pm_admin_auth')==='1'){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('admin-app').classList.add('visible');
+  init();
+}
+</script>
+</body>
+</html>

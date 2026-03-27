@@ -1,0 +1,63 @@
+{
+  "model_type": "GradientBoostingClassifier",
+  "accuracy": 1.0,
+  "f1_weighted": 1.0,
+  "cv_mean": 1.0,
+  "cv_std": 0.0,
+  "feature_columns": [
+    "age",
+    "gender",
+    "height_cm",
+    "weight_kg",
+    "bmi",
+    "meals_per_day",
+    "diet_type",
+    "water_lpd",
+    "physical_activity",
+    "chronic_disease",
+    "appetite_loss",
+    "fatigue",
+    "pregnant_lactating",
+    "bmi_category",
+    "symptom_count",
+    "water_category",
+    "age_group",
+    "diet_activity",
+    "nutrition_risk_flag"
+  ],
+  "n_features": 19,
+  "label_map": {
+    "0": "low",
+    "1": "moderate",
+    "2": "high"
+  },
+  "n_classes": 3,
+  "training_samples": 24,
+  "test_samples": 6,
+  "feature_importance": {
+    "symptom_count": 0.15161,
+    "water_lpd": 0.142935,
+    "height_cm": 0.110661,
+    "bmi": 0.100328,
+    "meals_per_day": 0.09552,
+    "weight_kg": 0.086141,
+    "chronic_disease": 0.065308,
+    "physical_activity": 0.060029,
+    "appetite_loss": 0.054846,
+    "water_category": 0.047508,
+    "age": 0.021807,
+    "fatigue": 0.016024,
+    "diet_type": 0.01506,
+    "gender": 0.01135,
+    "diet_activity": 0.010757,
+    "nutrition_risk_flag": 0.008108,
+    "bmi_category": 0.001705,
+    "age_group": 0.000304,
+    "pregnant_lactating": 0.0
+  },
+  "class_distribution": {
+    "0": 13,
+    "1": 5,
+    "2": 12
+  }
+}
